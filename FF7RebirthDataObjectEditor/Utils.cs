@@ -1,12 +1,73 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using CUE4Parse.UE4.Objects.UObject;
+using FF7R2.DataObject;
 using FF7RebirthDataObjectEditor.FF7Types;
 
 namespace FF7RebirthDataObjectEditor;
 
 public static class Utils
 {
+	public static void FixFNames(IoStoreAsset asset, ObservableCollection<EntryRow> rows)
+	{
+		var properties = new List<NamePropertyViewModel>();
+		foreach (var data in rows)
+			properties.AddRange(Utils.Flatten(data.Data.Properties).OfType<NamePropertyViewModel>());
+
+		var originalFNames = asset.innerAsset.frozenObject.NameToOffsetLookup.Keys.ToList();
+		foreach (var prop in properties)
+		{
+			var wantedString = prop.UserText;
+			if (wantedString == null)
+				continue;
+
+			if (TryGetMatchingFNameWithNumber(wantedString, originalFNames, out var theFName))
+			{
+				prop.Data = theFName;
+				continue;
+			}
+			
+			var matchingExistingFNameIndex = originalFNames.IndexOf(wantedString);
+			if (matchingExistingFNameIndex != -1)
+			{
+				prop.Data = originalFNames[matchingExistingFNameIndex];
+				continue;
+			}
+
+			var added = asset.AddFName(wantedString);
+			prop.Data = added;
+			originalFNames.Add(added);
+		}
+	}
+
+	private static bool TryGetMatchingFNameWithNumber(string searchString, List<FName> existingNames, out FName? matchingFName)
+	{
+		matchingFName = default;
+		var indexOfNumberSeparator = searchString.LastIndexOf('_');
+		if (indexOfNumberSeparator == -1)
+			return false;
+		
+		var displayNumber = searchString.Substring(indexOfNumberSeparator + 1);
+		if (!int.TryParse(displayNumber, out int number))
+			return false;
+		
+		var actualNumberOnFName = number + 1;
+
+		var actualNameText = searchString.Substring(0, indexOfNumberSeparator);
+		foreach (var fname in existingNames)
+		{
+			if (fname.Number != actualNumberOnFName)
+				continue;
+			if (fname.PlainText != actualNameText)
+				continue;
+			matchingFName = fname;
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public static string ExportToCsv(ObservableCollection<EntryRow> entries)
 	{
 		var sb = new StringBuilder();

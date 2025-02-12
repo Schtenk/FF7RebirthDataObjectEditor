@@ -135,26 +135,6 @@ public partial class MainWindow : Window
         PropertyGrid.GenerateColumns(true);
     }
 
-    private void AddAnyNewFNames()
-    {
-        var properties = new List<NamePropertyViewModel>();
-        foreach (var data in _viewModel.AssetEntries)
-            properties.AddRange(Utils.Flatten(data.Data.Properties).OfType<NamePropertyViewModel>());
-
-        foreach (var prop in properties)
-        {
-            var wantedString = prop.UserText;
-            if (wantedString == null)
-                continue;
-
-            var originalFNames = _asset.Names;
-            var matchingExistingFNameIndex = originalFNames.IndexOf(wantedString);
-            if (matchingExistingFNameIndex != -1)
-                prop.Data = originalFNames[matchingExistingFNameIndex];
-            else
-                prop.Data = _asset.AddFName(wantedString);
-        }
-    }
 
     private void LoadSettings()
     {
@@ -206,7 +186,7 @@ public partial class MainWindow : Window
 
     public void SaveFileTo(string filePath)
     {
-        AddAnyNewFNames();
+        Utils.FixFNames(_asset, _viewModel.AssetEntries);
             
         _asset.Save(filePath, IoStoreAsset.Mode.WRITE_PARSED_DATA);
     }
