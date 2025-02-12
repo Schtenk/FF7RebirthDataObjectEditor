@@ -146,11 +146,11 @@ public partial class MainWindow : Window
             var wantedString = prop.UserText;
             if (wantedString == null)
                 continue;
-                        
-            var originalFNamesTexts = _asset.Names.Select(x => x.Text).ToList();
-            var matchingExistingFNameIndex = originalFNamesTexts.IndexOf(wantedString);
+
+            var originalFNames = _asset.Names;
+            var matchingExistingFNameIndex = originalFNames.IndexOf(wantedString);
             if (matchingExistingFNameIndex != -1)
-                prop.Data = originalFNamesTexts[matchingExistingFNameIndex];
+                prop.Data = originalFNames[matchingExistingFNameIndex];
             else
                 prop.Data = _asset.AddFName(wantedString);
         }
