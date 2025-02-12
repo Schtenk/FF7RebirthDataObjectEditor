@@ -9,4 +9,19 @@ public class StringPropertyViewModel(PropertyValue propertyValue) : APropertyVie
 		result = input;
 		return true;
 	}
+	
+	public override string Value
+	{
+		get => Data?.ToString();
+		set
+		{
+			if (!TryParse(value, out var parsed))
+				return;
+
+			if (string.IsNullOrWhiteSpace(value))
+				parsed = null;
+			
+			Data = parsed;
+		}
+	}
 }
