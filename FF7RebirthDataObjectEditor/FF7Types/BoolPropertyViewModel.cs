@@ -2,7 +2,7 @@
 
 namespace FF7RebirthDataObjectEditor.FF7Types;
 
-public class BoolAPropertyViewModel(PropertyValue propertyValue) : APropertyViewModel<bool>(propertyValue)
+public class BoolPropertyViewModel(PropertyValue propertyValue) : APropertyViewModel<bool>(propertyValue)
 {
 	protected override bool TryParse(string input, out bool result) => bool.TryParse(input, out result);
 }

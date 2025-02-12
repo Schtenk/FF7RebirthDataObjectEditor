@@ -3,7 +3,7 @@ using FF7R2.DataObject.Properties;
 
 namespace FF7RebirthDataObjectEditor.FF7Types;
 
-public class NameAPropertyViewModel(PropertyValue propertyValue) : APropertyViewModel<FName?>(propertyValue)
+public class NamePropertyViewModel(PropertyValue propertyValue) : APropertyViewModel<FName?>(propertyValue)
 {
 	public string UserText;
 	protected override bool TryParse(string input, out FName? result)
