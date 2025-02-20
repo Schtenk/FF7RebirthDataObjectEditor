@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using FF7R2.DataObject;
 using FF7RebirthDataObjectEditor.FF7Types;
 
@@ -9,7 +10,9 @@ namespace FF7RebirthDataObjectEditor;
 
 public partial class PropertyGridControl : UserControl
 {
-	public ObservableCollection<EntryRow> AssetEntries
+    private SolidColorBrush transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+    public ObservableCollection<EntryRow> AssetEntries
 	{
 		get { return (ObservableCollection<EntryRow>)GetValue(AssetEntriesProperty); }
 		set { SetValue(AssetEntriesProperty, value); }
@@ -56,6 +59,8 @@ public partial class PropertyGridControl : UserControl
                 buttonFactory.SetBinding(Button.TagProperty, new Binding($"Data.Properties[{i}]"));
                 // buttonFactory.SetBinding( Button.DataContextProperty, new Binding($"Data.Properties[{0}]"));
                 buttonFactory.SetValue(Button.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+                buttonFactory.SetValue(Button.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+                buttonFactory.SetValue(Button.BackgroundProperty, transparentBrush);
                 assetDataGrid.Columns.Add(new DataGridTemplateColumn
                 {
                     Header = properties[i].Name,
